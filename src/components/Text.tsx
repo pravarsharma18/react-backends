@@ -1,5 +1,8 @@
 import { useEffect, useRef } from "react";
 
+const connect = () => console.log("connecting..");
+const disConnect = () => console.log("disConnecting..");
+
 const Text = () => {
   const nameRef = useRef<HTMLInputElement>(null);
 
@@ -10,6 +13,11 @@ const Text = () => {
   });
   useEffect(() => {
     document.title = "My App";
+  });
+  useEffect(() => {
+    connect();
+    // clean up code
+    return () => disConnect();
   });
   return (
     <div>
