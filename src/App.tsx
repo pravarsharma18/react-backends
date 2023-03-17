@@ -32,13 +32,39 @@ function App() {
     return () => controller.abort();
   }, []);
 
+  const handleDelete = (user: User) => {
+    const originalUsers = [...users];
+    setUsers(users.filter((u) => u.id !== user.id));
+    const controller = new AbortController();
+    axios
+      .delete("https://jsonplaceholder.typicode.com/xusers/" + user.id, {
+        signal: controller.signal,
+      })
+      .catch((err) => {
+        if (err instanceof CanceledError) return; // otherwise it will show message on browser
+        setError(err.message);
+        setUsers(originalUsers);
+      });
+  };
+
   return (
     <>
       {error && <p className="text-danger">{error}</p>}
       {isLoading && <div className="spinner-border"></div>}
-      <ul>
+      <ul className="list-group">
         {users.map((user) => (
-          <li key={user.id}>{user.name}</li>
+          <li
+            className="list-group-item d-flex justify-content-between"
+            key={user.id}
+          >
+            {user.name}
+            <button
+              className="btn btn-outline-danger"
+              onClick={() => handleDelete(user)}
+            >
+              Delete
+            </button>
+          </li>
         ))}
       </ul>
     </>
